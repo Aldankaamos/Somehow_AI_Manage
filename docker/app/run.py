@@ -459,7 +459,6 @@ def main():
     st.sidebar.markdown("---") 
 
 if __name__ == "__main__":
-    # Llamar al comando mlflow ui en una nueva terminal o en segundo plano
     main()
     
       
