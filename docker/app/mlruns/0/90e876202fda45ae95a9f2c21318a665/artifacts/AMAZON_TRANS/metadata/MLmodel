@@ -1,0 +1,18 @@
+artifact_path: AMAZON_TRANS
+flavors:
+  keras:
+    data: data
+    keras_backend: tensorflow
+    keras_version: 3.4.0
+    save_exported_model: false
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.keras
+    python_version: 3.10.12
+mlflow_version: 2.13.0
+model_size_bytes: 795220
+model_uuid: 5f2e34d9dd9a4a0a80d14910b33b16a3
+run_id: 90e876202fda45ae95a9f2c21318a665
+utc_time_created: '2024-06-26 07:53:51.484957'

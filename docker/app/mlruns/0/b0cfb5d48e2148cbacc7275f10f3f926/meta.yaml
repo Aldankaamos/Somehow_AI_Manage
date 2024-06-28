@@ -1,0 +1,16 @@
+artifact_uri: mlruns/0/b0cfb5d48e2148cbacc7275f10f3f926/artifacts
+end_time: 1719024754460
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: b0cfb5d48e2148cbacc7275f10f3f926
+run_name: indecisive-tern-509
+run_uuid: b0cfb5d48e2148cbacc7275f10f3f926
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1718910445821
+status: 3
+tags: []
+user_id: root
+
