@@ -67,6 +67,19 @@ def load_and_preprocess_data(file_path_pred, file_path_train, start_date_pred, e
     df['Date'] = pd.to_datetime(df['Date'])
     df.set_index('Date', inplace=True)
 
+    df_aux = pd.read_csv(file_path_train)
+    df_aux = df_aux[['Date', target]]
+    df_aux['Date'] = pd.to_datetime(df_aux['Date'])
+    df_aux.set_index('Date', inplace=True)
+
+    df_drift = pd.read_csv(file_path_pred)
+    df_drift['Date'] = pd.to_datetime(df_drift['Date'])
+    df_drift.set_index('Date', inplace=True)
+    
+    df_real = pd.read_csv(file_path_train)
+    df_real['Date'] = pd.to_datetime(df_real['Date'])
+    df_real.set_index('Date', inplace=True)
+    
     # Set start_date to the first date in the dataset if not specified
     if start_date_pred is None:
         start_date_pred = df.index.min()
@@ -81,22 +94,20 @@ def load_and_preprocess_data(file_path_pred, file_path_train, start_date_pred, e
 
     # Set start_date to the first date in the dataset if not specified
     if start_date_train is None:
-        start_date_train = df.index.min()
+        start_date_train = df_real.index.min()
     else:
         start_date_train = pd.to_datetime(start_date_train)
 
     # Set end_date to the last date in the dataset if not specified
     if end_date_train is None:
-        end_date_train = df.index.max()
+        end_date_train = df_real.index.max()
     else:
         end_date_train = pd.to_datetime(end_date_train)
-        
-    df_real = pd.read_csv(file_path_train)
-    df_real['Date'] = pd.to_datetime(df_real['Date'])
-    df_real.set_index('Date', inplace=True)
-    train_data = df.loc[start_date_train:end_date_train]
+    
+    train_data = df_aux.loc[start_date_train:end_date_train]
+    
     train_data_real = df_real.loc[start_date_train:end_date_train]
-    drift_data = df_real.loc[start_date_pred:end_date_pred]
+    drift_data = df_drift.loc[start_date_pred:end_date_pred]
 
     data = df.loc[start_date_pred:end_date_pred]
     test_data = data
@@ -270,8 +281,17 @@ def retrain_model(run_id, file_path, start_date, end_date, target, epochs, batch
     model, input_shape = load_model_func(run_id)
     # Load and preprocess data
     test, y_test = load_and_preprocess_retrain(file_path, start_date, end_date, target, input_shape)
-    # Retrain model (you may adjust this based on your actual retraining process)
-    # Example assumes retraining on the same data as initial training
+
+    #for layer in model.layers:
+        #if hasattr(layer, 'kernel_initializer') and hasattr(layer, 'bias_initializer'):
+            #layer.kernel.assign(layer.kernel_initializer(layer.kernel.shape))
+            #layer.bias.assign(layer.bias_initializer(layer.bias.shape))
+        
+    model.compile(
+        loss="mse",
+        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+        metrics=["mae"],
+    )
     model.fit(test, y_test, epochs=epochs, batch_size=batch_size)  # Example retraining process
 
     # Start a new MLflow run to log the retrained model

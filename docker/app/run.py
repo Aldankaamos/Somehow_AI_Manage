@@ -8,6 +8,7 @@ import subprocess
 import pandas as pd
 from streamlit_option_menu import option_menu
 import base64
+import time
 
 mlflow.set_tracking_uri("http://mlflow:5000")
 
@@ -410,6 +411,7 @@ def main():
                         response = requests.post("http://localhost:5001/upload", files=files, data=data)
                         if response.status_code == 200:
                             st.success("Operación exitosa.")
+                            st.experimental_rerun()
                         else:
                             st.error(f"Error en la operación: {response.status_code}")
                     except Exception as e:
