@@ -103,14 +103,38 @@ def main_page(all_run_ids):
     a, b = st.columns([7,1])
     st.subheader("Ingrese los datos requeridos")
     model_choice = st.selectbox("Selecciona el modelo a utilizar (Run ID en MLflow)", all_run_ids)
-    
-    a, b = st.columns(2)
+    a, b, c, d = st.columns([4, 1, 4, 1])
     with a:
         uploaded_file_pred = st.file_uploader("Subir dataset para solicitar una predicción al modelo")
+    with b: 
+        st.write("")
+        st.write("")
+        st.write("")
+        with st.popover("Ver datos 📚", use_container_width=True):
+            if uploaded_file_pred is not None:
+                data = pd.read_csv(uploaded_file_pred)
+                st.write(data)
+            else:
+                st.error("No data")
+    with c:
+        uploaded_file_train = st.file_uploader("Subir dataset con el que se entrenó el modelo para realizar calculos de data drift")
+    with d:
+        st.write("")
+        st.write("")
+        st.write("")
+        with st.popover("Ver datos 📚", use_container_width=True):
+            if uploaded_file_train is not None:
+                data = pd.read_csv(uploaded_file_train)
+                st.write(data) 
+            else:
+                st.error("No data")
+    a, b = st.columns(2)
+    with a:
+
         start_date_pred = st.date_input("Fecha de inicio (opcional)", key="start_date", value=None)
         end_date_pred = st.date_input("Fecha de fin (opcional)", key="end_date", value=None)
     with b:
-        uploaded_file_train = st.file_uploader("Subir dataset con el que se entrenó el modelo para realizar calculos de data drift")
+
         start_date_train = st.date_input("Fecha de inicio (opcional)", key="start_date_train", value=None)
         end_date_train = st.date_input("Fecha de fin (opcional)", key="end_date_train", value=None)
     target_column = st.text_input("Especifica la columna objetivo (target) a predecir del set de datos")
@@ -278,7 +302,19 @@ def monitoring_page():
 def retrain_model_page(all_run_ids):
     st.title("Reentrenamiento del modelo")
     model_choice = st.selectbox("Seleccionar el modelo a reentrenar de MLflow", all_run_ids)
-    uploaded_file = st.file_uploader("Sube la nueva base de datos para realizar el entrenamiento")
+    a, b = st.columns([4, 1])
+    with a:
+        uploaded_file = st.file_uploader("Sube la nueva base de datos para realizar el entrenamiento")
+    with b: 
+        st.write("")
+        st.write("")
+        st.write("")
+        with st.popover("Ver datos 📚", use_container_width=True):
+            if uploaded_file is not None:
+                data = pd.read_csv(uploaded_file)
+                st.write(data)
+            else:
+                st.error("No data")
     a, b = st.columns(2)
     with a:
         target_column = st.text_input("Especifica la columna objetivo (target) para entrenar el modelo")
