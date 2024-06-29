@@ -12,8 +12,6 @@ import time
 
 mlflow.set_tracking_uri("http://mlflow:5000")
 
-@st.cache_data
-
 def fetch_grafana_alerts():
     GRAFANA_API_URL = "http://grafana:3000/api/alertmanager/grafana/api/v2/alerts"
     API_KEY = "glsa_IzOJksMRCilcbRthAxDEYzTyUrxc3RV8_6284ab9c"
@@ -85,7 +83,7 @@ st.set_page_config(
 def top_menu():       
     page = option_menu(
         menu_title=None,  # No mostrar el título del menú
-        options=["Página Principal", "Monitoreo", "Rentrenamiento del modelo"],  # Opciones del menú
+        options=["Página Principal", "Monitoreo", "Reentrenamiento del modelo"],  # Opciones del menú
         icons=["house", "graph-up", "gear"],  # Iconos para cada opción (opcional)
         menu_icon="cast",  # Icono del menú (opcional)
         default_index=0,  # Índice predeterminado
@@ -397,7 +395,7 @@ def main():
         main_page(all_run_ids)
     elif page == "Monitoreo":
         monitoring_page()
-    elif page == "Rentrenamiento del modelo":
+    elif page == "Reentrenamiento del modelo":
         retrain_model_page(all_run_ids)
     
     base_dir = os.path.dirname(os.path.abspath(__file__))

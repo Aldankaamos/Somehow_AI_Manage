@@ -163,7 +163,6 @@ def load_and_preprocess_retrain(file_path, start_date, end_date, target, input_s
     test = np.reshape(test, (test.shape[0], test.shape[1], 1))
 
     y_test = scaled_test[input_shape:]
-    y_test = scaler.inverse_transform(y_test)
 
     return test, y_test 
 
@@ -276,41 +275,16 @@ def trigger_prediction():
     
     return jsonify(response_data)
 
-import tensorflow as tf
-
-def reset_weights(model):
-    for layer in model.layers:
-        if isinstance(layer, tf.keras.Model):
-            reset_weights(layer)  # Recursively reset for nested models
-            continue
-        if isinstance(layer, (tf.keras.layers.Dense, tf.keras.layers.LSTM)):
-            # Reset weights for Dense or LSTM layers
-            for w in layer.weights:
-                w.assign(tf.random.uniform(w.shape, -0.05, 0.05))
-        elif hasattr(layer, 'get_weights') and hasattr(layer, 'set_weights'):
-            # Reset weights for other layers that have get_weights and set_weights methods
-            weights = layer.get_weights()
-            if weights:
-                layer.set_weights([tf.random.uniform(w.shape, -0.05, 0.05) for w in weights])
-
-# Example usage:
-# model = ...  # your Keras model with potentially changed architecture
-# reset_weights(model)
-
-
 def retrain_model(run_id, file_path, start_date, end_date, target, epochs, batch_size, model_name):
     # Load model
     model, input_shape = load_model_func(run_id)
     # Load and preprocess data
     test, y_test = load_and_preprocess_retrain(file_path, start_date, end_date, target, input_shape)
-
-    reset_weights(model)
         
-    model.compile(
-        loss="mse",
-        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
-        metrics=["mae"],
-    )
+    model.compile(optimizer = 'adam',
+				loss = 'mean_squared_error',
+    			metrics = ["accuracy"])
+    
     model.fit(test, y_test, epochs=epochs, batch_size=batch_size)  # Example retraining process
 
     # Start a new MLflow run to log the retrained model
