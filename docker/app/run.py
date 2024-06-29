@@ -12,6 +12,8 @@ import time
 
 mlflow.set_tracking_uri("http://mlflow:5000")
 
+@st.cache_data
+
 def fetch_grafana_alerts():
     GRAFANA_API_URL = "http://grafana:3000/api/alertmanager/grafana/api/v2/alerts"
     API_KEY = "glsa_IzOJksMRCilcbRthAxDEYzTyUrxc3RV8_6284ab9c"
@@ -101,44 +103,63 @@ def top_menu():
 def main_page(all_run_ids):
     st.title("Solicitud de Predicción")
     st.markdown("---")
-    a, b = st.columns([7,1])
+    a, b = st.columns([7, 1])
     st.subheader("Ingrese los datos requeridos")
     model_choice = st.selectbox("Selecciona el modelo a utilizar (Run ID en MLflow)", all_run_ids)
+
     a, b, c, d = st.columns([4, 1, 4, 1])
+    
+    # File uploader for prediction dataset
     with a:
         uploaded_file_pred = st.file_uploader("Subir dataset para solicitar una predicción al modelo")
+    
+    # Show data from prediction dataset
     with b: 
         st.write("")
         st.write("")
         st.write("")
         with st.popover("Ver datos 📚", use_container_width=True):
             if uploaded_file_pred is not None:
-                data = pd.read_csv(uploaded_file_pred)
-                st.write(data)
+                data_pred = pd.read_csv(uploaded_file_pred)
+                st.write(data_pred)
             else:
                 st.error("No data")
+
+    # File uploader for training dataset
     with c:
         uploaded_file_train = st.file_uploader("Subir dataset con el que se entrenó el modelo para realizar calculos de data drift")
+    
+    # Show data from training dataset
     with d:
         st.write("")
         st.write("")
         st.write("")
         with st.popover("Ver datos 📚", use_container_width=True):
             if uploaded_file_train is not None:
-                data = pd.read_csv(uploaded_file_train)
-                st.write(data) 
+                data_train = pd.read_csv(uploaded_file_train)
+                st.write(data_train)
             else:
                 st.error("No data")
+    
     a, b = st.columns(2)
+    
+    # Date inputs
     with a:
-
         start_date_pred = st.date_input("Fecha de inicio (opcional)", key="start_date", value=None)
         end_date_pred = st.date_input("Fecha de fin (opcional)", key="end_date", value=None)
+    
     with b:
-
         start_date_train = st.date_input("Fecha de inicio (opcional)", key="start_date_train", value=None)
         end_date_train = st.date_input("Fecha de fin (opcional)", key="end_date_train", value=None)
-    target_column = st.text_input("Especifica la columna objetivo (target) a predecir del set de datos")
+        
+    # Target column selection
+    if uploaded_file_pred is not None:    
+        column_names = data_pred.columns[1:].tolist()
+        target_column = st.selectbox("Especifica la columna objetivo (target) a predecir del set de datos", column_names)
+    else:
+        target_column = st.selectbox("Especifica la columna objetivo (target) a predecir del set de datos", [])
+        st.warning("Sube un archivo para ver las columnas disponibles.")
+        
     st.markdown("---")
     if st.button("Solicitar Predicción"):
         with st.spinner('Solicitando predicción...'):
@@ -318,13 +339,17 @@ def retrain_model_page(all_run_ids):
                 st.error("No data")
     a, b = st.columns(2)
     with a:
-        target_column = st.text_input("Especifica la columna objetivo (target) para entrenar el modelo")
+        if uploaded_file is not None:    
+            column_names = data.columns[1:].tolist()
+            target_column = st.selectbox("Especifica la columna objetivo (target) a predecir del set de datos", column_names)
+        else:
+            target_column = st.selectbox("Especifica la columna objetivo (target) para entrenar el modelo", [])
         start_date = st.date_input("Fecha de inicio (opcional)", key="retrain_start_date", value=None)
         end_date = st.date_input("Fecha de fin (opcional)", key="retrain_end_date", value=None)
     with b:
         model_name = st.text_input("Ingresa el nombre del modelo (path)")
         epochs = st.text_input("Ingresa la cantidad de epocas de entrenamiento")
-        batch_size = st.text_input("Ingresa el tamaño del batch")
+        batch_size = st.selectbox("Selecciona el tamaño del batch", [1, 2, 4, 8, 16, 32, 64, 128, 256])
 
     if st.button("Iniciar reentrenamiento"):
         if uploaded_file and model_choice and target_column:
