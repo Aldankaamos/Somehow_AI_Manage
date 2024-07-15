@@ -1,0 +1,17 @@
+{
+	"ulid": "01J1RYXBG16A3ENXT29FS2ZGWS",
+	"minTime": 1719720000000,
+	"maxTime": 1719727200000,
+	"stats": {
+		"numSamples": 38421,
+		"numSeries": 27,
+		"numChunks": 325
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01J1RYXBG16A3ENXT29FS2ZGWS"
+		]
+	},
+	"version": 1
+}

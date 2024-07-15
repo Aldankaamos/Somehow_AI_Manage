@@ -4,7 +4,7 @@ entry_point_name: ''
 experiment_id: '0'
 lifecycle_stage: active
 run_id: b0cfb5d48e2148cbacc7275f10f3f926
-run_name: indecisive-tern-509
+run_name: AMAZON_RNN
 run_uuid: b0cfb5d48e2148cbacc7275f10f3f926
 source_name: ''
 source_type: 4

@@ -183,10 +183,9 @@ def log_metrics_to_mlflow(rmse, mae, r2, data_drift_score, data_drift_percentage
 
 def update_metrics(run_id, reference_data, current_data, target):
     metrics = get_mlflow_metrics(run_id)
-    rmse_gauge.set(metrics.get('rmse', 0))
-    mae_gauge.set(metrics.get('mae', 0))
-    r2_gauge.set(metrics.get('r2', 0))
-
+    #rmse_gauge.set(metrics.get('rmse', 0))
+    #mae_gauge.set(metrics.get('mae', 0))
+    #r2_gauge.set(metrics.get('r2', 0))
     data_drift_score, data_drift_percentage, data_drift  = generate_evidently_metrics(reference_data, current_data, target)
     data_drift_score_gauge.set(data_drift_score)
     data_drift_percentage_gauge.set(data_drift_percentage)
