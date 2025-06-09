@@ -75,7 +75,7 @@ Este proyecto fue desarrollado como parte del trabajo de título para optar al g
 ## Créditos
 
 Desarrollado por Marcelo Guzmán como proyecto de título.  
-Universidad Técnica Federico Santa María.
+Universidad de O'Higgins (UOH).
 
 ## Licencia
 
